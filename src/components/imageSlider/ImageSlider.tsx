@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useRef } from "react";
 import "./imageSlider.scss";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 
 type ImagesType = {
     src: string;
@@ -24,12 +23,12 @@ export const ImageSlider = ({
 }: ImageSliderProps) => {
     const even = images.length % 2 === 0;
     const activeImageIndex = Math.floor(images.length / 2);
-
     const transformRef = useRef(even ? -310 : 0);
     const indexRef = useRef(activeImageIndex);
 
     useEffect(() => {
         const container = document.querySelector(".image-slider");
+
         if (!container) return;
 
         const handleMouseOver = (event: Event) => {
@@ -48,12 +47,12 @@ export const ImageSlider = ({
 
         const handleClick = (event: Event) => {
             const target = event.target as HTMLElement | null;
-            const activeDot = document.querySelector(".current");
+            const activeDot = container.querySelector(".current");
             const dots = Array.from(container.querySelectorAll(".dot"));
-            const carousel = container.querySelector(
+            const carousel = container?.querySelector(
                 "ul"
             ) as HTMLElement | null;
-            const activeElement = container.querySelector(
+            const activeElement = container?.querySelector(
                 ".active"
             ) as HTMLElement | null;
 
@@ -73,9 +72,7 @@ export const ImageSlider = ({
                     ) as HTMLElement | null;
                     if (!dotEl) return;
 
-                    const dots = Array.from(container.querySelectorAll(".dot"));
                     const dotIndex = dots.indexOf(dotEl);
-                    const activeDot = container.querySelector(".current");
 
                     if (
                         dotIndex === -1 ||
@@ -106,41 +103,62 @@ export const ImageSlider = ({
                     break;
                 }
                 case "left":
-                    if (indexRef.current !== 0 && carousel && activeElement) {
-                        indexRef.current--;
-                        transformRef.current += 620;
-                        carousel.style.transform = `translateX(${transformRef.current}px)`;
+                    if (carousel && activeElement) {
+                        if (indexRef.current === 0) {
+                            transformRef.current -= 620 * (images.length - 1);
+                            indexRef.current = images.length - 1;
+                            carousel.style.transform = `translateX(${transformRef.current}px)`;
 
-                        activeElement.classList.remove("active");
-                        if (activeElement.previousElementSibling) {
-                            (
-                                activeElement.previousElementSibling as HTMLElement
-                            ).classList.add("active");
+                            activeElement.classList.remove("active");
+                            carousel.lastElementChild?.classList.add(
+                                "active"
+                            );
+
+                            activeDot?.classList.remove("current");
+                            dots[0]?.classList.add("current");
+                        } else {
+                            indexRef.current--;
+                            transformRef.current += 620;
+                            carousel.style.transform = `translateX(${transformRef.current}px)`;
+
+                            activeElement.classList.remove("active");
+                            if (activeElement.previousElementSibling) {
+                                (
+                                    activeElement.previousElementSibling as HTMLElement
+                                ).classList.add("active");
+                            }
+
+                            activeDot?.classList.remove("current");
+                            dots[indexRef.current]?.classList.add("current");
                         }
-
-                        activeDot?.classList.remove("current");
-                        dots[indexRef.current]?.classList.add("current");
                     }
+
                     break;
                 case "right":
-                    if (
-                        indexRef.current !== images.length - 1 &&
-                        carousel &&
-                        activeElement
-                    ) {
-                        indexRef.current++;
-                        transformRef.current -= 620;
-                        carousel.style.transform = `translateX(${transformRef.current}px)`;
+                    if (carousel && activeElement) {
+                        if (indexRef.current === images.length - 1) {
+                            transformRef.current += 620 * indexRef.current;
+                            indexRef.current = 0;
+                            carousel.style.transform = `translateX(${transformRef.current}px)`;
 
-                        activeElement.classList.remove("active");
-                        if (activeElement.nextElementSibling) {
+                            activeElement.classList.remove("active");
+                            carousel.firstElementChild?.classList.add("active");
+
+                            activeDot?.classList.remove("current");
+                            dots[0]?.classList.add("current");
+                        } else {
+                            indexRef.current++;
+                            transformRef.current -= 620;
+                            carousel.style.transform = `translateX(${transformRef.current}px)`;
+
+                            activeElement.classList.remove("active");
                             (
                                 activeElement.nextElementSibling as HTMLElement
-                            ).classList.add("active");
-                        }
+                            )?.classList.add("active");
 
-                        activeDot?.classList.remove("current");
-                        dots[indexRef.current]?.classList.add("current");
+                            activeDot?.classList.remove("current");
+                            dots[indexRef.current]?.classList.add("current");
+                        }
                     }
                     break;
             }
@@ -181,19 +199,11 @@ export const ImageSlider = ({
             </ul>
             {arrows && (
                 <div className="arrows">
-                    <div className="left">
-                        <ArrowLeft
-                            size="30px"
-                            strokeWidth="3px"
-                            data-target="left"
-                        />
+                    <div className="left" data-target="left">
+                        {"<"}
                     </div>
-                    <div className="right">
-                        <ArrowRight
-                            size="30px"
-                            strokeWidth="3px"
-                            data-target="right"
-                        />
+                    <div className="right" data-target="right">
+                        {">"}
                     </div>
                 </div>
             )}

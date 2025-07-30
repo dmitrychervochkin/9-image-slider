@@ -11,10 +11,12 @@
         color: white;
         display: flex;
         justify-content: center;
-        gap: 20px;
+        gap: 30px;
 
         & .left,
         .right {
+            font-weight: 900;
+            font-size: 30px;
             cursor: pointer;
             transition: color 0.2s;
 
@@ -59,7 +61,8 @@
 
     & ul li.active img {
         opacity: 1;
-        transition: opacity 0.5s;
+        transition: opacity 0.5s,
+            transform 1s cubic-bezier(0.075, 0.82, 0.165, 1);
     }
     & ul li.active h3 {
         opacity: 1;
@@ -67,7 +70,7 @@
     }
 
     & ul li.active img.zoom {
-        transform: scale(2);
+        transform: scale(1.5);
     }
 
     & ul li:not(.active) img {
@@ -84,7 +87,7 @@
         object-fit: cover;
         display: block;
         cursor: pointer;
-        transition: transform 0.6s cubic-bezier(0.075, 0.82, 0.165, 1);
+        transition: transform 1s cubic-bezier(0.075, 0.82, 0.165, 1);
     }
     & .dots {
         display: flex;
@@ -102,6 +105,14 @@
             &.current {
                 background-color: white;
             }
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .image-slider {
+        & li.active {
+            width: 100%;
         }
     }
 }
